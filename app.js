@@ -1,13 +1,12 @@
 // Import libraries
 const express = require("express");
-const bodyParser = require("body-parser");
 
 // Add features ---------------------------------------------
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 // Deprecation error fix
 app.use(
-  bodyParser.urlencoded({
+  express.urlencoded({
     extended: true,
   })
 );
@@ -25,7 +24,8 @@ app.use((err, req, res, next) => {
   return next();
 });
 
+const PORT = process.env.PORT || 5000;
 // Init
-app.listen(5000, (err) => {
-  console.log("Listening");
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
 });
