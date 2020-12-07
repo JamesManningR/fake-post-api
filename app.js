@@ -1,5 +1,6 @@
 // Import libraries
 const express = require("express");
+const cors = require("cors");
 
 // Add features ---------------------------------------------
 const app = express();
@@ -8,6 +9,12 @@ app.use(express.json());
 app.use(
   express.urlencoded({
     extended: true,
+  })
+);
+
+app.use(
+  cors({
+    origin: "bsk-workflow-demo.web.app",
   })
 );
 
