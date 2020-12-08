@@ -1,24 +1,25 @@
 // Import libraries
 const express = require("express");
 const cors = require("cors");
+const app = express();
 
 // Add features ---------------------------------------------
-const app = express();
+// New body parser
 app.use(express.json());
-// Deprecation error fix
+// Deprecation error removed
 app.use(
   express.urlencoded({
     extended: true,
   })
 );
-
+// Cors
 app.use(
   cors({
-    origin: "bsk-workflow-demo.web.app",
+    origin: "https://bsk-workflow-demo.web.app",
   })
 );
 
-// Import Routes
+// Import Routes --------------------------------------------
 const routes = require("./routes");
 app.use(routes);
 
@@ -31,8 +32,9 @@ app.use((err, req, res, next) => {
   return next();
 });
 
-const PORT = process.env.PORT || 5000;
 // Init
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
