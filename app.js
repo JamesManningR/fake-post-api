@@ -16,6 +16,7 @@ app.use(
 app.use(
   cors({
     origin: "https://bsk-workflow-demo.web.app",
+    optionsSuccessStatus: 200,
   })
 );
 
