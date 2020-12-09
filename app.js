@@ -1,17 +1,14 @@
 // Import libraries
 const express = require("express");
+const bodyParser = require('body-parser');
 const cors = require("cors");
 const app = express();
 
 // Add features ---------------------------------------------
 // New body parser
-app.use(express.json());
-// Deprecation error removed
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 // Cors
 app.use(
   cors({
@@ -24,12 +21,11 @@ app.use(
 const routes = require("./routes");
 app.use(routes);
 
-// Eroor Fallback Route
+// Error Fallback Route
 app.use((err, req, res, next) => {
-  res.status(err.code || 500).json({
-    message: err.message || "Something went wrong",
-    code: err.code || 500,
-  });
+  const errorCode = err.code || 500;
+  console.log(errorCode);
+  res.status(errorCode).send();
   return next();
 });
 

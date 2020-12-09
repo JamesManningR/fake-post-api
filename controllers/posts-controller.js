@@ -2,78 +2,84 @@ const HttpError = require("../models/HttpError");
 const Post = require("../models/Post");
 const { posts } = require("../db");
 
-const getPost = async (req, res, next) => {
-  const id = req.params.id;
-
-  let post;
-
-  try {
-    post = await posts.getRecordById(id);
-  } catch (err) {
-    const error = new HttpError(`Post with ID: ${id} not found`, 404);
-    return next(error);
-  }
-  return post;
-};
-
-const getPosts = async (req, res, next) => {
-  let foundPosts;
-
-  try {
-    foundPosts = await posts.getAllRecords();
-  } catch (err) {
-    const error = new HttpError("Unable to gather posts", 500);
-    return next(error);
-  }
-  if (!foundPosts) {
-    const error = new HttpError("Nothing found", 404);
-    return next(error);
-  }
-  res.send(foundPosts);
-};
-
+// CREATE
 const createPost = async (req, res, next) => {
   const { title, body } = req.body;
   const newPost = new Post({ title, body });
 
-  let createdPost;
-  try {
-    createdPost = await posts.addRecord(newPost);
-  } catch (err) {
-    const error = new HttpError("Could not create project", 500);
-    return next(error);
-  }
-  res.status(201).send(createdPost);
+  return posts
+    .addRecord(newPost)
+    .catch(() => {
+      const error = new HttpError("Could not create project", 500);
+      next(error);
+    })
+    .then((createdPost) => {
+      res.status(201).send(createdPost);
+    });
 };
 
+// READ
+const getPost = async (req, res, next) => {
+  const id = req.params.id;
+
+  return posts
+    .getRecordById(id)
+    .catch(() => {
+      const error = new HttpError(`Post with ID: ${id} not found`, 404);
+      next(error);
+    })
+    .then((post) => {
+      return post;
+    });
+};
+
+// INDEX
+const getPosts = async (req, res, next) => {
+  return posts
+    .getAllRecords()
+    .catch(() => {
+      const error = new HttpError("Unable to gather posts", 500);
+      next(error);
+    })
+    .then((foundPosts) => {
+      if (foundPosts === -1) {
+        const error = new HttpError("Nothing found", 204);
+        next(error);
+      } else {
+        res.status(200).send(foundPosts);
+      }
+    });
+};
+
+// UPDATE
 const updatePost = async (req, res, next) => {
   const id = req.params.id;
   const { title, body } = req.body;
   const postData = { title, body };
 
-  let updatedPost;
-
-  try {
-    updatedPost = await posts.updateRecord(id, postData);
-  } catch (err) {
-    console.log(err);
-    const error = new HttpError("Unable to update project", 500);
-    return next(error);
-  }
-  res.send(updatedPost);
+  posts
+    .updateRecord(id, postData)
+    .catch(() => {
+      const error = new HttpError("Unable to update project", 500);
+      next(error);
+    })
+    .then((updatedPost) => {
+      res.status(200).send(updatedPost);
+    });
 };
 
+// DELETE
 const deletePost = async (req, res, next) => {
   const id = req.params.id;
 
   posts
     .removeRecord(id)
     .then((removedPostId) => {
-      res.send(removedPostId);
+      res.status(200).send(removedPostId);
     })
     .catch(() => {
       const error = new HttpError("Unable to delete project", 500);
-      return next(error);
+      next(error);
     });
 };
 

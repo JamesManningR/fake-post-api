@@ -33,6 +33,19 @@ class ArrayTable extends JsonDbSystem {
       });
   }
 
+  async getAllRecords() {
+    return fs
+      .readFile(this.filePath, "utf8")
+      .then((data) => {
+        return data.length > 0
+          ? JSON.parse(data)
+          : -1;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   async updateRecord(id, updatedRecord) {
     return fs
       .readFile(this.filePath, "ut8")

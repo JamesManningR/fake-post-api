@@ -2,7 +2,7 @@
 const fs = require("fs").promises;
 const JsonDbSystem = require("./JsonDbSystem");
 
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 class ObjectBasedTable extends JsonDbSystem {
   constructor(filePath) {
@@ -30,6 +30,18 @@ class ObjectBasedTable extends JsonDbSystem {
           .catch((err) => {
             throw err;
           });
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  async getAllRecords() {
+    return fs
+      .readFile(this.filePath, "utf8")
+      .then((data) => {
+        const parsedData = JSON.parse(data);
+        return Object.keys(parsedData).length != 0 ? parsedData : -1;
       })
       .catch((err) => {
         throw err;

@@ -10,7 +10,7 @@ router.use("/post", postRoutes);
 
 // Base Route
 router.use("/", function (req, res) {
-  res.send("Hello, I'm here!");
+  res.send("Use the '/post' route");
 });
 
 // Non Error Fallback route
