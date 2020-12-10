@@ -5,12 +5,15 @@ class JsonDbSystem {
   async getRecorddByID(id) {
     return fs
       .readFile(this.filePath, "utf8")
-      .then((data) => {
-        return JSON.parse(data)[id];
-      })
       .catch((err) => {
         throw err;
-      });
+      })
+      .then((data) => {
+        const foundRecord = JSON.parse(data)[id];
+        const foundRecords = {}
+        foundRecords[id] = foundRecord;
+        return foundRecords;
+      })
   }
 }
 

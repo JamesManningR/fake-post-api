@@ -23,9 +23,11 @@ class ObjectBasedTable extends JsonDbSystem {
 
         records[id] = newRecord;
 
-        fs.writeFile(this.filePath, JSON.stringify(records))
+        return fs.writeFile(this.filePath, JSON.stringify(records))
           .then(() => {
-            return newRecord;
+            const newRecords = {};
+            newRecords[id] = newRecord;
+            return newRecords;
           })
           .catch((err) => {
             throw err;
@@ -63,7 +65,9 @@ class ObjectBasedTable extends JsonDbSystem {
             throw err;
           })
           .then(() => {
-            return updatedRecord;
+            const updatedRecords = {};
+            updatedRecords[id] = updatedRecord;
+            return updatedRecords;
           });
       })
       .catch((err) => {
@@ -76,6 +80,8 @@ class ObjectBasedTable extends JsonDbSystem {
       .readFile(this.filePath, "utf8")
       .then((data) => {
         const parsedData = JSON.parse(data);
+        const deletedRecord = {};
+        deletedRecord[id] = parsedData[id];
         delete parsedData[id];
 
         return fs
@@ -84,7 +90,7 @@ class ObjectBasedTable extends JsonDbSystem {
             throw err;
           })
           .then(() => {
-            return id;
+            return deletedRecord;
           });
       })
       .catch((err) => {

@@ -13,8 +13,8 @@ const createPost = async (req, res, next) => {
       const error = new HttpError("Could not create project", 500);
       next(error);
     })
-    .then((createdPost) => {
-      res.status(201).send(createdPost);
+    .then((createdPosts) => {
+      res.status(201).send(createdPosts);
     });
 };
 
@@ -28,8 +28,8 @@ const getPost = async (req, res, next) => {
       const error = new HttpError(`Post with ID: ${id} not found`, 404);
       next(error);
     })
-    .then((post) => {
-      return post;
+    .then((foundPosts) => {
+      return foundPosts;
     });
 };
 
@@ -63,8 +63,8 @@ const updatePost = async (req, res, next) => {
       const error = new HttpError("Unable to update project", 500);
       next(error);
     })
-    .then((updatedPost) => {
-      res.status(200).send(updatedPost);
+    .then((updatedPosts) => {
+      res.status(200).send(updatedPosts);
     });
 };
 
@@ -74,12 +74,12 @@ const deletePost = async (req, res, next) => {
 
   posts
     .removeRecord(id)
-    .then((removedPostId) => {
-      res.status(200).send(removedPostId);
-    })
     .catch(() => {
       const error = new HttpError("Unable to delete project", 500);
       next(error);
+    })
+    .then((removedPosts) => {
+      res.status(200).send(removedPosts);
     });
 };
 
