@@ -59,7 +59,10 @@ class ObjectBasedTable extends JsonDbSystem {
       .then((data) => {
         let readData = JSON.parse(data);
 
-        Object.assign(updatedRecord);
+        // Assign new data to updated values
+        Object.assign(readData, updatedRecord);
+
+        // Update the update date
         readData[id].dateUpdated = new Date();
 
         return fs
@@ -70,7 +73,7 @@ class ObjectBasedTable extends JsonDbSystem {
           .then(() => {
             // return new record as key value pair
             const updatedRecords = {};
-            updatedRecords[id] = updatedRecord;
+            updatedRecords[id] = readData[id];
             return updatedRecords;
           });
       })
