@@ -1,4 +1,3 @@
-/* eslint-disable node/prefer-promises/fs */
 const fs = require("fs").promises;
 const JsonDbSystem = require("./JsonDbSystem");
 
@@ -16,15 +15,19 @@ class ObjectBasedTable extends JsonDbSystem {
       .then((data) => {
         let records = JSON.parse(data);
 
+        // Generate Unique Id
         let id = uuidv4();
         while (records[id] != undefined) {
           id = uuidv4();
         }
 
+        // Add new record to records
         records[id] = newRecord;
 
+        // Write to file
         return fs.writeFile(this.filePath, JSON.stringify(records))
           .then(() => {
+            // Return new record as a key value pair
             const newRecords = {};
             newRecords[id] = newRecord;
             return newRecords;
@@ -42,8 +45,8 @@ class ObjectBasedTable extends JsonDbSystem {
     return fs
       .readFile(this.filePath, "utf8")
       .then((data) => {
-        const parsedData = JSON.parse(data);
-        return Object.keys(parsedData).length != 0 ? parsedData : -1;
+        const readData = JSON.parse(data);
+        return Object.keys(readData).length != 0 ? readData : -1;
       })
       .catch((err) => {
         throw err;
@@ -54,17 +57,18 @@ class ObjectBasedTable extends JsonDbSystem {
     return fs
       .readFile(this.filePath, "utf-8")
       .then((data) => {
-        let parsedData = JSON.parse(data);
+        let readData = JSON.parse(data);
 
-        Object.assign(parsedData[id], updatedRecord);
-        parsedData[id].dateUpdated = new Date();
+        Object.assign(updatedRecord);
+        readData[id].dateUpdated = new Date();
 
         return fs
-          .writeFile(this.filePath, JSON.stringify(parsedData))
+          .writeFile(this.filePath, JSON.stringify(readData))
           .catch((err) => {
             throw err;
           })
           .then(() => {
+            // return new record as key value pair
             const updatedRecords = {};
             updatedRecords[id] = updatedRecord;
             return updatedRecords;
@@ -79,18 +83,21 @@ class ObjectBasedTable extends JsonDbSystem {
     return fs
       .readFile(this.filePath, "utf8")
       .then((data) => {
-        const parsedData = JSON.parse(data);
+        const readData = JSON.parse(data);
         const deletedRecord = {};
-        deletedRecord[id] = parsedData[id];
-        delete parsedData[id];
+        deletedRecord[id] = readData[id];
+        delete readData[id];
 
         return fs
-          .writeFile(this.filePath, JSON.stringify(parsedData))
+          .writeFile(this.filePath, JSON.stringify(readData))
           .catch((err) => {
             throw err;
           })
           .then(() => {
-            return deletedRecord;
+            // return removed record as key value pair
+            const deletedRecords = {};
+            deletedRecords[id] = updatedRecord;
+            return deletedRecords;
           });
       })
       .catch((err) => {
