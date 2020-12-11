@@ -1,6 +1,6 @@
 name: Deploy to Staging
 
-on: workflow_dispatch
+on: push
 
 jobs:
   push-to-staging:
@@ -9,11 +9,11 @@ jobs:
       - name: "Checkout Github"
         uses: actions/checkout@v2
 
-      - name: Deploy to Heroku
+      - name: Build, Push and Deploy to Heroku
         id: heroku
-        uses: akhileshns/heroku-deploy@v2.1.1
+        uses: jctaveras/heroku-deploy@v2.1.1
         with:
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          appdir: "dist"
+          email: ${{ secrets.HEROKU_EMAIL }}
+          api_key: ${{ secrets.HEROKU_API_KEY }}
+          app_name: ${{ secrets.HEROKU_APP_NAME }}
+          dockerfile_path: ""
