@@ -45,37 +45,38 @@ class ObjectBasedTable extends JsonDbSystem {
     return fs
       .readFile(this.filePath, "utf8")
       .then((data) => {
-        const readData = JSON.parse(data);
-        return Object.keys(readData).length != 0 ? readData : -1;
+        const storeData = JSON.parse(data);
+        return Object.keys(storeData).length != 0 ? storeData : -1;
       })
       .catch((err) => {
         throw err;
       });
   }
 
-  async updateRecord(id, updatedRecord) {
+  async updateRecord(id, newData) {
     return fs
       .readFile(this.filePath, "utf-8")
-      .then((data) => {
-        let readData = JSON.parse(data);
-
+      .then(async (fileData) => {
+        let storeData = JSON.parse(fileData);
+        let updatedRecord = storeData[id];
         // Assign new data to updated values
-        Object.assign(readData, updatedRecord);
-
+        Object.assign(updatedRecord, newData);
         // Update the update date
-        readData[id].dateUpdated = new Date();
+        updatedRecord.dateUpdated = new Date();
 
-        return fs
-          .writeFile(this.filePath, JSON.stringify(readData))
-          .catch((err) => {
-            throw err;
-          })
-          .then(() => {
-            // return new record as key value pair
-            const updatedRecords = {};
-            updatedRecords[id] = readData[id];
-            return updatedRecords;
-          });
+        // update the record
+        storeData[id] = updatedRecord;
+
+        try {
+          await fs
+            .writeFile(this.filePath, JSON.stringify(storeData));
+        } catch (err) {
+          throw err;
+        }
+        // return new record as key value pair
+        const updatedRecords = {};
+        updatedRecords[id] = storeData[id];
+        return updatedRecords;
       })
       .catch((err) => {
         throw err;
@@ -86,13 +87,13 @@ class ObjectBasedTable extends JsonDbSystem {
     return fs
       .readFile(this.filePath, "utf8")
       .then((data) => {
-        const readData = JSON.parse(data);
+        const storeData = JSON.parse(data);
         const deletedRecord = {};
-        deletedRecord[id] = readData[id];
-        delete readData[id];
+        deletedRecord[id] = storeData[id];
+        delete storeData[id];
 
         return fs
-          .writeFile(this.filePath, JSON.stringify(readData))
+          .writeFile(this.filePath, JSON.stringify(storeData))
           .catch((err) => {
             throw err;
           })
