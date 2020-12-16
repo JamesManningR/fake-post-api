@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 // Cors
 app.use(
   cors({
-    origin: "https://bsk-workflow-demo.web.app",
+    origin: "https://bsk-deployment-wf.web.app",
     optionsSuccessStatus: 200,
   })
 );
