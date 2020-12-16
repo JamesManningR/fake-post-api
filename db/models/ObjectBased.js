@@ -88,8 +88,8 @@ class ObjectBasedTable extends JsonDbSystem {
       .readFile(this.filePath, "utf8")
       .then((data) => {
         const storeData = JSON.parse(data);
-        const deletedRecord = {};
-        deletedRecord[id] = storeData[id];
+        const deletedRecords = {};
+        deletedRecords[id] = storeData[id];
         delete storeData[id];
 
         return fs
@@ -99,8 +99,6 @@ class ObjectBasedTable extends JsonDbSystem {
           })
           .then(() => {
             // return removed record as key value pair
-            const deletedRecords = {};
-            deletedRecords[id] = updatedRecord;
             return deletedRecords;
           });
       })

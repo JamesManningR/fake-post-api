@@ -24,7 +24,7 @@ app.use(routes);
 // Error Fallback Route
 app.use((err, req, res, next) => {
   const errorCode = err.code || 500;
-  console.log(errorCode);
+  console.log(err);
   res.status(errorCode).send();
   return next();
 });
